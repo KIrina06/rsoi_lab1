@@ -5,10 +5,8 @@ import os
 
 def create_app():
     app = Flask(__name__)
-    database_url = os.environ.get(
-        'DATABASE_URL',
-        'postgresql://program:test@postgres:5432/persons'  # только для локальной разработки
-    )
+    database_url = os.environ.get('DATABASE_URL')
+    app.config['SQLALCHEMY_DATABASE_URI'] = database_url
 
     app.config.from_mapping(
         SQLALCHEMY_DATABASE_URI=database_url,

@@ -9,5 +9,4 @@ COPY . .
 
 EXPOSE 8080
 
-# Команда для Render: запуск через gunicorn
 CMD ["gunicorn", "-b", "0.0.0.0:8080", "wsgi:app"]
