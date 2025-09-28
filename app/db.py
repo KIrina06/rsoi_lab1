@@ -1,20 +1,16 @@
 import time
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.exc import OperationalError
 
 db = SQLAlchemy()
 
-def init_db(app):
+def init_db(app, retries=5, delay=2):
     db.init_app(app)
-    with app.app_context():
-        retries = 5
-        while retries > 0:
-            try:
+    for i in range(retries):
+        try:
+            with app.app_context():
                 db.create_all()
-                break
-            except OperationalError:
-                retries -= 1
-                print("DB not ready, retrying in 2s...")
-                time.sleep(2)
-        else:
-            raise RuntimeError("Cannot connect to database after multiple retries")
+            return
+        except Exception as e:
+            print("DB not ready, retrying in {}s...".format(delay))
+            time.sleep(delay)
+    raise RuntimeError("Cannot connect to database after multiple retries")
